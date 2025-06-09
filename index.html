@@ -45,31 +45,15 @@
 </head>
 <body>
 
-<script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
 <script>
-  Amplify.configure({
-    Auth: {
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_UZFvptknE',
-      userPoolWebClientId: '1f5vh84vm4lafajc5575b7tv8t',
-      oauth: {
-        domain: 'uzfvptkne.auth.us-east-1.amazoncognito.com',
-        scope: ['email', 'openid'],
-        redirectSignIn: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
-        redirectSignOut: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
-        responseType: 'code'
-      }
-    }
-  });
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasAuthCode = urlParams.has('code');
 
-  Amplify.Auth.currentAuthenticatedUser()
-    .then(user => console.log("Authenticated:", user))
-    .catch(() => {
-      console.log("Redirecting to Hosted UI...");
-      Amplify.Auth.federatedSignIn(); // Redirects to Cognito Hosted UI
-    });
+  if (!hasAuthCode) {
+    // Redirect to Cognito Hosted UI login
+    window.location.href = "https://us-east-1uzfvptkne.auth.us-east-1.amazoncognito.com/login?client_id=1f5vh84vm4lafajc5575b7tv8t&response_type=code&scope=email+openid+phone&redirect_uri=https%3A%2F%2Fd84l1y8p4kdic.cloudfront.net";
+  }
 </script>
-
 
 
     <header>
