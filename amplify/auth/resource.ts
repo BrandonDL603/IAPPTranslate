@@ -1,3 +1,4 @@
+
 import { defineAuth } from '@aws-amplify/backend';
 
 /**
@@ -5,7 +6,12 @@ import { defineAuth } from '@aws-amplify/backend';
  * @see https://docs.amplify.aws/gen2/build-a-backend/auth
  */
 export const auth = defineAuth({
-  loginWith: {
-    email: true,
-  },
+  loginWith: {
+    externalSaml: {
+      providerName: 'Entra',
+      metadataUrl: 'https://login.microsoftonline.com/56a51620-6c5b-4c7b-a71b-845bbe83069a/federationmetadata.xml',
+      callbackUrls: ['https://dev.d2uluvkyv859go.amplifyapp.com/'],
+      logoutUrls: ['https://dev.d2uluvkyv859go.amplifyapp.com/'],
+    }
+  }
 });
