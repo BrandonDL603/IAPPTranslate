@@ -47,19 +47,29 @@
 
 <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
 <script>
-  Amplify.configure({
-    Auth: {
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_UZFvptknE',
-      userPoolWebClientId: '1f5vh84vm4lafajc5575b7tv8t',
-      mandatorySignIn: true
-    }
-  });
+  Amplify.configure({
+    Auth: {
+      region: 'us-east-1',
+      userPoolId: 'us-east-1_UZFvptknE',
+      userPoolWebClientId: '1f5vh84vm4lafajc5575b7tv8t',
+      oauth: {
+        domain: 'https://us-east-1uzfvptkne.auth.us-east-1.amazoncognito.com',
+        scope: ['email', 'openid'],
+        redirectSignIn: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
+        redirectSignOut: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
+        responseType: 'code'
+      }
+    }
+  });
 
-  Amplify.Auth.currentAuthenticatedUser()
-    .then(user => console.log("Authenticated:", user))
-    .catch(() => window.location.href = '/login.html'); // redirect if not logged in
+  Amplify.Auth.currentAuthenticatedUser()
+    .then(user => console.log("Authenticated:", user))
+    .catch(() => {
+      console.log("Redirecting to Hosted UI...");
+      Amplify.Auth.federatedSignIn(); // Redirects to Cognito Hosted UI
+    });
 </script>
+
 
 
     <header>
