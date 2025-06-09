@@ -44,13 +44,9 @@
     </style>
 </head>
 <body>
-https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js
-<script>
-  AWS.config.region = 'us-east-1'; // your region
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:xxxx-xxxx-xxxx-xxxx' // your identity pool ID
-  });
 
+<script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
+<script>
   Amplify.configure({
     Auth: {
       region: 'us-east-1',
@@ -64,6 +60,7 @@ https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js
     .then(user => console.log("Authenticated:", user))
     .catch(() => window.location.href = '/login.html'); // redirect if not logged in
 </script>
+
 
     <header>
         IAPP Language Translator
