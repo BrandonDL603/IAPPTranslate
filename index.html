@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>IAPP Language Translator</title>
 
-  <!-- ✅ AWS Amplify CDN -->
+  <!-- AWS Amplify CDN -->
   https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js
 
   <style>
@@ -51,17 +51,17 @@
 <body>
 
 <script>
-  // ✅ Configure Amplify Auth
+  // Configure Amplify Auth
   window.Amplify.configure({
     Auth: {
       region: 'us-east-1',
-      userPoolId: 'us-east-1_us-east-1_UZFvptknE', // 🔁 Replace with your actual User Pool ID
-      userPoolWebClientId: '1f5vh84vm4lafajc5575b7tv8t', // 🔁 Replace with your App Client ID
+      userPoolId: 'us-east-1_UZFvptknE', // Replace with your actual User Pool ID
+      userPoolWebClientId: '1f5vh84vm4lafajc5575b7tv8t', // Replace with your App Client ID
       oauth: {
         domain: 'us-east-1uzfvptkne.auth.us-east-1.amazoncognito.com',
         scope: ['email', 'openid', 'phone'],
-        redirectSignIn: 'https://d84l1y8p4kdic.cloudfront.net',
-        redirectSignOut: 'https://d84l1y8p4kdic.cloudfront.net',
+        redirectSignIn: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
+        redirectSignOut: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
         responseType: 'code'
       }
     }
