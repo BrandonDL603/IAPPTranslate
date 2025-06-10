@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,10 +48,41 @@
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
-  const hasAuthCode = urlParams.has('code');
+  const authCode = urlParams.get('code');
+  const storedToken = sessionStorage.getItem('id_token');
 
-  if (!hasAuthCode) {
-    // Redirect to Cognito Hosted UI login
+  if (storedToken) {
+    console.log("User already authenticated.");
+  } else if (authCode) {
+    // Exchange code for tokens
+    fetch("https://us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com/oauth2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        client_id: "5acbpt930tnomatg1rptur9uoa",
+        code: authCode,
+        redirect_uri: "https://dev.d2uluvkyv859go.amplifyapp.com/"
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.id_token) {
+        sessionStorage.setItem('id_token', data.id_token);
+        window.history.replaceState({}, document.title, "/"); // Clean up URL
+      } else {
+        alert("Authentication failed.");
+        console.error("Token exchange error:", data);
+      }
+    })
+    .catch(error => {
+      console.error("Token request failed:", error);
+      alert("Authentication error.");
+    });
+  } else {
+    // No token or code, redirect to login
     window.location.href = "https://us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com/login?client_id=5acbpt930tnomatg1rptur9uoa&response_type=code&scope=email+openid+phone&redirect_uri=https%3A%2F%2Fdev.d2uluvkyv859go.amplifyapp.com%2F";
   }
 </script>
