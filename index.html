@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IAPP Language Translator</title>
-  <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
+   <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -47,37 +46,11 @@
 </head>
 <body>
 
-<script>
-  Amplify.default.configure({
-    Auth: {
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_qrUtDYdsG',
-      userPoolWebClientId: '5acbpt930tnomatg1rptur9uoa',
-      oauth: {
-        domain: 'us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com',
-        scope: ['email', 'openid', 'phone'],
-        redirectSignIn: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
-        redirectSignOut: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
-        responseType: 'code'
-      }
-    }
-  });
-
-  Amplify.Auth.currentAuthenticatedUser()
-    .then(user => {
-      console.log("User is signed in:", user);
-    })
-    .catch(() => {
-      console.log("User not signed in. Redirecting to login...");
-      Amplify.Auth.federatedSignIn();
-    });
-</script>
-
 <header>
   IAPP Language Translator
 </header>
 
-<img class="logo" src="https://iapptranslateresources.s3.us-east-1.amazonaws.com/iapp-logo.png" alt="IAPP Logo">
+https://iapptranslateresources.s3.us-east-1.amazonaws.com/iapp-logo.png
 
 <h2>Translate Text Instantly</h2>
 
@@ -108,58 +81,80 @@
 <h2>Translated Text:</h2>
 <p id="translated-text"></p>
 
+<pre id="output">Checking login status...</pre>
+
 <script>
-  document.getElementById("translate-btn").addEventListener("click", async function() {
-    console.log("Translate button clicked!");
+  document.addEventListener("DOMContentLoaded", () => {
+    const { Auth } = window.Amplify;
 
-    let inputText = document.getElementById("input-text").value;
-    let sourceLang = document.getElementById("source-lang").value;
-    let targetLang = document.getElementById("target-lang").value;
+    Auth.configure({
+      region: 'us-east-1',
+      userPoolId: 'us-east-1_XXXXXXXXX', // Replace with your actual user pool ID
+      userPoolWebClientId: '5acbpt930tnomatg1rptur9uoa',
+      oauth: {
+        domain: 'us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com',
+        scope: ['email', 'openid', 'phone'],
+        redirectSignIn: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
+        redirectSignOut: 'https://dev.d2uluvkyv859go.amplifyapp.com/',
+        responseType: 'code'
+      }
+    });
 
-    const apiGatewayUrl = "https://d9zhzjuvfg.execute-api.us-east-1.amazonaws.com/dev";
-
-    if (!inputText) {
-      alert("Please enter text to translate.");
-      return;
-    }
-
-    try {
-      let response = await fetch(apiGatewayUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: inputText,
-          source_lang: sourceLang,
-          target_lang: targetLang
-        })
+    Auth.currentAuthenticatedUser()
+      .then(user => {
+        document.getElementById("output").textContent = JSON.stringify(user, null, 2);
+      })
+      .catch(() => {
+        document.getElementById("output").textContent = "Not signed in. Redirecting to login...";
+        Auth.federatedSignIn();
       });
 
-      let rawResponse = await response.text();
-      console.log("Raw API Response:", rawResponse);
+    document.getElementById("translate-btn").addEventListener("click", async function () {
+      let inputText = document.getElementById("input-text").value;
+      let sourceLang = document.getElementById("source-lang").value;
+      let targetLang = document.getElementById("target-lang").value;
 
-      let data;
-      try {
-        data = JSON.parse(rawResponse);
-        if (typeof data.body === "string") {
-          data.body = JSON.parse(data.body);
-        }
-      } catch (error) {
-        console.error("JSON Parsing Error:", error);
-        alert("Invalid response format from API.");
+      const apiGatewayUrl = "https://d9zhzjuvfg.execute-api.us-east-1.amazonaws.com/dev";
+
+      if (!inputText) {
+        alert("Please enter text to translate.");
         return;
       }
 
-      if (data.body.translated_text) {
-        document.getElementById("translated-text").innerText = data.body.translated_text;
-        console.log("Translation Successful:", data.body.translated_text);
-      } else {
-        alert("Translation failed. Please check the API response.");
-        console.error("Unexpected API Response Structure:", data);
+      try {
+        let response = await fetch(apiGatewayUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: inputText,
+            source_lang: sourceLang,
+            target_lang: targetLang
+          })
+        });
+
+        let rawResponse = await response.text();
+        let data;
+        try {
+          data = JSON.parse(rawResponse);
+          if (typeof data.body === "string") {
+            data.body = JSON.parse(data.body);
+          }
+        } catch (error) {
+          console.error("JSON Parsing Error:", error);
+          alert("Invalid response format from API.");
+          return;
+        }
+
+        if (data.body.translated_text) {
+          document.getElementById("translated-text").innerText = data.body.translated_text;
+        } else {
+          alert("Translation failed. Please check the API response.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Translation failed. Please check the API setup.");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Translation failed. Please check the API setup.");
-    }
+    });
   });
 </script>
 
