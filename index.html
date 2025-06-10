@@ -48,12 +48,18 @@
 <script>
   const urlParams = new URLSearchParams(window.location.search);
   const hasAuthCode = urlParams.has('code');
+  const storedToken = localStorage.getItem('id_token');
 
-  if (!hasAuthCode) {
-    // Redirect to Cognito Hosted UI login
-    //window.location.href = "https://us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com/login?client_id=5acbpt930tnomatg1rptur9uoa&response_type=code&scope=email+openid+phone&redirect_uri=https%3A%2F%2Fdev.d2uluvkyv859go.amplifyapp.com%2F";
+  console.log("Current URL:", window.location.href);
+  console.log("Auth code present:", hasAuthCode);
+  console.log("Stored token:", storedToken);
+
+  if (!storedToken && !hasAuthCode) {
+    console.log("No token or code found. Redirecting to login...");
+    window.location.href = "https://us-east-1qrutdydsg.auth.us-east-1.amazoncognito.com/login?client_id=5acbpt930tnomatg1rptur9uoa&response_type=code&scope=email+openid+phone&redirect_uri=https%3A%2F%2Fdev.d2uluvkyv859go.amplifyapp.com%2F";
   }
 </script>
+
 
 <header>
     IAPP Language Translator
